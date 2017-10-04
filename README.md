@@ -25,26 +25,31 @@ If a different country should be used you can set `PBF_DATA` on build.
   # cd nominatim-docker/2.5
   ```
 
-2. Modify Dockerfile, set your url for PBF
-
-  ```
-  ENV PBF_DATA http://download.geofabrik.de/europe/monaco-latest.osm.pbf
-  ```
-3. Configure incrimental update. By default CONST_Replication_Url configured for Monaco.
-If you want a different update source, you will need to declare `CONST_Replication_Url` in local.php. Documentation [here] (https://github.com/twain47/Nominatim/blob/master/docs/Import_and_update.md#updates). For example, to use the daily country extracts diffs for Gemany from geofabrik add the following:
+2. Configure incremental update in the file local.php. By default CONST_Replication_Url is configured for Monaco.
+If you want a different update source, you will need to change `CONST_Replication_Url` in local.php. Documentation [here] (https://github.com/twain47/Nominatim/blob/master/docs/Import_and_update.md#updates). For example, to use the daily country extracts diffs for Gemany from geofabrik add the following:
   ```
   @define('CONST_Replication_Url', 'http://download.geofabrik.de/europe/germany-updates');
   ```
 
-4. Build 
+3. Build Container
 
   ```
   docker build -t nominatim .
   ```
-5. Run
 
+4. Create Database
+  Assume you have a volume mounted for your postgresql at /mnt/postgresql, otherwise change the path
+  in -v, also change the path to the .osm.pbf file if you're intending on using a different set of
+  source data.
   ```
-  docker run --restart=always -d -p 8080:8080 --name nominatim-monacco nominatim
+  docker run -v /mnt/postgresql:/var/lib/postgresql --name nominatim nominatim --createdb http://download.geofabrik.de/europe/monaco-latest.osm.pbf
+  ```
+
+5. Run
+  Assume you have a volume mounted for your postgresql at /mnt/postgresql, otherwise change the path
+  in -v.
+  ```
+  docker run -v /mnt/postgresql:/var/lib/postgresql --restart=always -d -p 8080:8080 nominatim
   ```
   If this succeeds, open [http://localhost:8080/](http:/localhost:8080) in a web browser
 
@@ -53,7 +58,8 @@ If you want a different update source, you will need to declare `CONST_Replicati
 You can run Docker image from docker hub.
 
 ```
-docker run --restart=always -d -p 8080:8080 --name nominatim mediagis/nominatim:latest
+docker run -v /mnt/postgresql:/var/lib/postgresql --name nominatim mediagis/nominatim:latest --createdb http://download.geofabrik.de/europe/monaco-latest.osm.pbf
+docker run -v /mnt/postgresql:/var/lib/postgresql --restart=always -d -p 8080:8080 --name nominatim mediagis/nominatim:latest
 ```
 Service will run on [http://localhost:8080/](http:/localhost:8080)
 

@@ -1,6 +1,9 @@
 FROM ubuntu:trusty
 MAINTAINER winsent <pipetc@gmail.com>
 
+# Make sure you mount this volume somewhere with a lot of space
+VOLUME /var/lib/postgresql
+
 ENV DEBIAN_FRONTEND noninteractive
 ENV LANG C.UTF-8
 RUN locale-gen en_US.UTF-8
@@ -31,6 +34,7 @@ ENV NOMINATIM_VERSION v.2.5.0
 RUN git clone --recursive https://github.com/openstreetmap/Nominatim ./src
 RUN cd ./src && git checkout $NOMINATIM_VERSION && git submodule update --recursive --init && \
   ./autogen.sh && ./configure && make
+RUN sed -i.bak "s/createdb /createdb --template template0 /g" /app/src/utils/setup.php
 
 
 # Nominatim create site
@@ -41,19 +45,13 @@ RUN rm -rf /var/www/html/* && ./src/utils/setup.php --create-website /var/www/ht
 COPY nominatim.conf /etc/apache2/sites-enabled/000-default.conf
 
 # Load initial data
-ENV PBF_DATA http://download.geofabrik.de/europe/monaco-latest.osm.pbf
-RUN curl -L $PBF_DATA --create-dirs -o /app/src/data.osm.pbf
-RUN service postgresql start && \
-    sudo -u postgres psql postgres -tAc "SELECT 1 FROM pg_roles WHERE rolname='nominatim'" | grep -q 1 || sudo -u postgres createuser -s nominatim && \
-    sudo -u postgres psql postgres -tAc "SELECT 1 FROM pg_roles WHERE rolname='www-data'" | grep -q 1 || sudo -u postgres createuser -SDR www-data && \
-    sudo -u postgres psql postgres -c "DROP DATABASE IF EXISTS nominatim" && \
-    useradd -m -p password1234 nominatim && \
-    chown -R nominatim:nominatim ./src && \
-    sudo -u nominatim ./src/utils/setup.php --osm-file /app/src/data.osm.pbf --all --threads 2 && \
-    service postgresql stop
+RUN useradd -m -p password1234 nominatim && \
+    chown -R nominatim:nominatim ./src
 
 EXPOSE 5432
 EXPOSE 8080
 
 COPY start.sh /app/start.sh
-CMD /app/start.sh
+
+ENTRYPOINT ["/bin/bash", "/app/start.sh"]
+CMD [ "" ]
