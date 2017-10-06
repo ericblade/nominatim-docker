@@ -1,7 +1,5 @@
 #!/bin/bash
 
-sudo service postgresql start
-
 POSITIONAL=()
 while [[ $# -gt 0 ]]
 do
@@ -34,6 +32,7 @@ then
     fi
     echo "Creating database from $PBF_DATA using $NUM_THREADS threads..."
 
+    rm -rf /var/lib/postgresql/*
     sudo chown postgres /var/lib/postgresql
     sudo -u postgres /usr/lib/postgresql/9.3/bin/initdb -D /var/lib/postgresql/9.3/main
 
@@ -48,4 +47,5 @@ then
     exit
 fi
 
+sudo service postgresql start
 /usr/sbin/apache2ctl -D FOREGROUND

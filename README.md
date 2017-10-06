@@ -30,6 +30,7 @@ If you want a different update source, you will need to change `CONST_Replicatio
   ```
   @define('CONST_Replication_Url', 'http://download.geofabrik.de/europe/germany-updates');
   ```
+  California map updates: http://download.geofabrik.de/north-america/us/california-updates/
 
 3. Build Container
 
@@ -44,6 +45,7 @@ If you want a different update source, you will need to change `CONST_Replicatio
   ```
   docker run -v /mnt/postgresql:/var/lib/postgresql --name nominatim nominatim --createdb http://download.geofabrik.de/europe/monaco-latest.osm.pbf
   ```
+  California map data: http://download.geofabrik.de/north-america/us/california-latest.osm.pbf
 
 5. Run
   Assume you have a volume mounted for your postgresql at /mnt/postgresql, otherwise change the path
