@@ -33,7 +33,9 @@ then
     echo "Creating database from $PBF_DATA using $NUM_THREADS threads..."
 
     rm -rf /var/lib/postgresql/*
-    sudo chown postgres /var/lib/postgresql
+    sudo chown -R postgres /var/lib/postgresql
+    sudo chgrp -R postgres /var/lib/postgresql
+
     sudo -u postgres /usr/lib/postgresql/9.3/bin/initdb -D /var/lib/postgresql/9.3/main
 
     sudo service postgresql start
@@ -46,6 +48,9 @@ then
     sudo service postgresql stop
     exit
 fi
+
+sudo chown -R postgres /var/lib/postgresql
+sudo chgrp -R postgres /var/lib/postgresql
 
 sudo service postgresql start
 /usr/sbin/apache2ctl -D FOREGROUND
