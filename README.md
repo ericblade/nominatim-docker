@@ -1,17 +1,21 @@
-# Nominatim Docker
+# Nominatim Docker - Differences from mediagis/nominatim-docker
 
-100% working container for [Nominatim](https://github.com/twain47/Nominatim).
+Container for [Nominatim](https://github.com/twain47/Nominatim).
 
-[![](https://images.microbadger.com/badges/image/mediagis/nominatim.svg)](https://microbadger.com/images/mediagis/nominatim "Get your own image badge on microbadger.com")
+I'm building this for use in an automatic deployment system.  As such, this is custom built to fit
+my requirements, and may or may not be useful to you.
 
-# Supported tags and respective `Dockerfile` links #
+This has been modified to allow for easy mounting of a separate data volume.
 
-- [`2.5.0`, `2.5`, `latest`  (*2.5/Dockerfile*)](https://github.com/mediagis/nominatim-docker/tree/master/2.5)
+This has been modified to allow for building of the data on the data volume easily, using
+command line parameters to docker.  I need to be able to build pieces of the nominatim dataset
+repeatedly, and this is very convenient to be able to build only the chunks of data that are
+required for a specific deployment.
 
-
-Run [http://wiki.openstreetmap.org/wiki/Nominatim](http://wiki.openstreetmap.org/wiki/Nominatim) in a docker container. Clones the current master and builds it. This is always the latest version, be cautious as it may be unstable.
-
-Uses Ubuntu 14.04 and PostgreSQL 9.3
+With a collection of snapshot images stored of various data volumes, it is easy to deploy a running
+instance for a specific dataset, without incurring the downsides of having a complete nominatim
+database running on a host that doesn't need it -- storage space and memory requirements,
+particularly.
 
 # Country
 To check that everything is set up correctly, download and load to Postgres PBF file with minimal size - Europe/Monacco (latest) from geofabrik.de.
@@ -21,7 +25,7 @@ If a different country should be used you can set `PBF_DATA` on build.
 1. Clone repository
 
   ```
-  # git clone git@github.com:mediagis/nominatim-docker.git
+  # git clone git@github.com:ericblade/nominatim-docker.git
   # cd nominatim-docker/2.5
   ```
 
