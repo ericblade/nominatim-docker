@@ -13,6 +13,9 @@ ENV NOMINATIM_VERSION v2.5.1
 WORKDIR /app
 
 # Install packages http://wiki.openstreetmap.org/wiki/Nominatim/Installation#Ubuntu.2FDebian
+# TODO: figure out how to build statically, so we can
+# apt-get -y purge .*-dev
+# at the end ?
 RUN apt-get -y update --fix-missing && \
     apt-get -o APT::Install-Recommends="false" -o APT::Install-Suggests="false" install -y build-essential libxml2-dev libpq-dev libbz2-dev libtool automake \
     libproj-dev libboost-dev libboost-system-dev libboost-filesystem-dev \
@@ -23,6 +26,8 @@ RUN apt-get -y update --fix-missing && \
     lua5.2 liblua5.2-dev libluabind-dev \
     osmosis && \
     \
+    apt-get purge -y libxcursor1 libx11-data xkb-data libxdamage1 libxfixes3 libxi6 libxcomposite1 \
+    libxrandr2 libgtk2.0-0 libxrender1 libxext6 libgdk-pixbuf2.0-0 libxinerama1 libcairo2 && \
     apt-get autoremove -y && \
     apt-get clean && \
     rm -rf /tmp/* /var/tmp/* /usr/share/doc/* /usr/share/man/* /var/lib/apt/lists/* && \
@@ -52,7 +57,6 @@ RUN apt-get -y update --fix-missing && \
     chown -R nominatim:nominatim /app/src && \
     \
     `# Final cleanup` && \
-    apt-get remove --purge -y .*-dev git && \
     apt-get autoremove -y && \
     apt-get clean && \
     rm -rf /tmp/* /var/tmp/* /usr/include/*
