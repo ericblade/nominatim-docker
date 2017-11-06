@@ -13,16 +13,14 @@ ENV NOMINATIM_VERSION v2.5.1
 WORKDIR /app
 
 # Install packages http://wiki.openstreetmap.org/wiki/Nominatim/Installation#Ubuntu.2FDebian
-RUN apt-get purge -y libxcursor1 libx11-data xkb-data libxdamage1 libxfixes3 libxi6 libxcomposite1 \
-    libxrandr2 libgtk2.0-0 libxrender1 libxext6 libgdk-pixbuf2.0-0 libxinerama1 libcairo2 && \
-    apt-get -y update --fix-missing && \
+RUN apt-get -y update --fix-missing && \
     apt-get -o APT::Install-Recommends="false" -o APT::Install-Suggests="false" install -y build-essential libxml2-dev libpq-dev libbz2-dev libtool automake \
     libproj-dev libboost-dev libboost-system-dev libboost-filesystem-dev \
     libboost-thread-dev libexpat-dev gcc proj-bin libgeos-c1 libgeos++-dev \
     libexpat-dev php5 php-pear php5-pgsql php5-json php-db libapache2-mod-php5 \
     postgresql postgis postgresql-contrib postgresql-9.3-postgis-2.1 \
     postgresql-server-dev-9.3 curl git autoconf-archive cmake python \
-    lua5.1 liblua5.1-dev libluabind-dev \
+    lua5.2 liblua5.2-dev libluabind-dev \
     osmosis && \
     \
     apt-get autoremove -y && \
